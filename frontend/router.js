@@ -1,4 +1,3 @@
-
 export async function loadPage(page) {
     const content = document.getElementById('content');
     let pageUrl = '';

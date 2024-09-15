@@ -4,18 +4,20 @@
     }
 */
     export async function saveData(storageKey) {
-        const forms = document.querySelectorAll('form');
-        let formData = JSON.parse(localStorage.getItem(storageKey)) || {};
+        //geçici bloğu begin
+        if (JSON.parse(localStorage.getItem(storageKey)))
+            return false;
+        const form = document.querySelector('form');
+        let formData = /*JSON.parse(localStorage.getItem(storageKey)) || */{};
 
-        forms.forEach((form, index) => {
-            const formId = form.id || `form-${index}`;
-            formData[formId] = formData[formId] || {};
-            new FormData(form).forEach((value, key) => {
-                formData[formId][key] = value;
-            });
+        formData[form.id] = {};
+        new FormData(form).forEach((value, key) => {
+            formData[form.id][key] = value;
         });
 
         localStorage.setItem(storageKey, JSON.stringify(formData));
+        return true;
+        //geçici bloğu end
     }
 /*
     async restoreData() {
