@@ -4,65 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Oyun - OrbitControls</title>
-    <style>
-        .overlay.topLeft {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            font-size: 80px;
-            z-index: 10;
-        }
-        .overlay.topRight {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 80px;
-            z-index: 10;
-        }
-        .overlay.topCenter {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 80px;
-            z-index: 10;
-        }
-        body {
-            background-image: url('background.png');
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-
-        .startGame {
-            background-color: #ff5733;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 15px 30px;
-            margin: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .startGame:hover {
-            background-color: #ff4d00;
-            transform: scale(1.05);
-        }
-
-        .startGame:active {
-            background-color: #e63946;
-        }
-    </style>
+    <link rel="stylesheet" href="game.css">
 </head>
 <body>
   <div class="overlay topLeft" style="max-width: inherit;"></div>

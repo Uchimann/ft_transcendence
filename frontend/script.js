@@ -4,14 +4,13 @@ import { handleRegisterData, authenticateUser } from './login/login.js';
 
 function setupEventListeners() {
     document.addEventListener('DOMContentLoaded', () => {
-        const buttons = document.querySelectorAll('.navbar-nav .button');
-
+        /*const buttons = document.querySelectorAll('.navbar-nav, .button');
         buttons.forEach(button => {
             button.addEventListener('click', (event) => {
                 const page = event.target.getAttribute('data-page');
                 loadPage(page);
             });
-        });
+        });*/
         loadPage('login');
     });
 
@@ -37,6 +36,7 @@ function setupEventListeners() {
             }
         });
     });
+
     document.addEventListener('click', (event) => {
         if (event.target.matches('form')) {
             event.preventDefault(); // Prevent default form submission
@@ -46,5 +46,5 @@ function setupEventListeners() {
         }
     });
 }
-    
+
 setupEventListeners();

@@ -49,11 +49,12 @@ export async function loadPage(page) {
         const html = await response.text();
         content.innerHTML = html;
 
-        if (scriptUrl) {
+        /*if (scriptUrl) {
             const script = document.createElement('script');
             script.src = scriptUrl;
+            script.type = "module";
             document.body.appendChild(script);
-        }
+        }*/
 
     } catch (error) {
         content.innerHTML = `<p>Error loading page: ${error.message}</p>`;

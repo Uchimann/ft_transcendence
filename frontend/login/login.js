@@ -36,11 +36,10 @@ export async function authenticateUser() {
     }
 }
 
-
 export function handleRegisterData(savedData) {
     const data = JSON.parse(savedData);
     const forms = document.querySelectorAll('form');
-    
+
     forms.forEach((form, index) => {
         const formId = form.id || `form-${index}`;
         if (data[formId]) {
