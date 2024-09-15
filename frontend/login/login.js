@@ -37,6 +37,8 @@ export async function authenticateUser() {
 }
 
 export function handleRegisterData(savedData) {
+    if (!savedData)
+        return;
     const data = JSON.parse(savedData);
     const forms = document.querySelectorAll('form');
 

@@ -1,12 +1,12 @@
-class FormDataStorage {
+/*class FormDataStorage {
     constructor(storageKey) {
         this.storageKey = storageKey;
     }
-    
-    async saveData() {
+*/
+    export async function saveData(storageKey) {
         const forms = document.querySelectorAll('form');
-        let formData = JSON.parse(localStorage.getItem(this.storageKey)) || {};
-        
+        let formData = JSON.parse(localStorage.getItem(storageKey)) || {};
+
         forms.forEach((form, index) => {
             const formId = form.id || `form-${index}`;
             formData[formId] = formData[formId] || {};
@@ -14,10 +14,10 @@ class FormDataStorage {
                 formData[formId][key] = value;
             });
         });
-        
-        localStorage.setItem(this.storageKey, JSON.stringify(formData));
+
+        localStorage.setItem(storageKey, JSON.stringify(formData));
     }
-    
+/*
     async restoreData() {
         const savedFormData = JSON.parse(localStorage.getItem(this.storageKey));
         if (savedFormData) {
@@ -39,3 +39,4 @@ class FormDataStorage {
 // To restore data
 
 export { FormDataStorage };
+*/
