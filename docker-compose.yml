@@ -1,0 +1,79 @@
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+    
+
+  usermanagement:
+    build: ./user_management/
+    container_name: usermanagementc
+    command: >
+      sh -c "
+      until pg_isready -h postgres -U postgres; do
+        echo 'Waiting for PostgreSQL to be ready...';
+        sleep 3;
+      done;
+      python manage.py makemigrations &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./user_management:/app
+    working_dir: /app
+    ports:
+      - "8004:8000"
+    environment:
+      DATABASE_NAME: usermanagement_db
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: 1234
+      DATABASE_HOST: postgres
+    env_file:
+      - ./user_management/.env
+
+
+  game:
+    build: ./game/
+    container_name: game_service
+    command: >
+      sh -c "
+      until pg_isready -h postgres -U postgres; do
+        echo 'Waiting for PostgreSQL to be ready...';
+        sleep 3;
+      done;
+      python manage.py makemigrations &&
+      python manage.py runserver 0.0.0.0:8001
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./game:/app
+    working_dir: /app
+    ports:
+      - "8005:8001"
+    environment:
+      DATABASE_NAME: game_db
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: 1234
+      DATABASE_HOST: postgres
+    env_file:
+      - ./game/.env
+volumes:
+  postgres_data:
