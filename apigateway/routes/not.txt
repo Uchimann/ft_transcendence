@@ -1,0 +1,113 @@
+Bu API Gateway yapısı, frontend uygulamadan gelen tüm istekleri ilgili mikro servislere yönlendirmek üzere tasarlanmış. Genel olarak, gelen tüm HTTP isteklerini proxy gibi davranarak dinamik olarak ilgili mikro servislere iletip onların yanıtlarını frontend'e iletir. Bu mimari, Onion Mimarisi prensiplerine oldukça uygun bir şekilde tasarlanmış. Çünkü iş mantığı, veri erişim katmanlarından ve proxy yönlendirmelerinden ayrı olarak katmanlara bölünmüş durumda.
+
+Onion Mimarisi ile Uygunluğu
+Onion Mimarisi, bir uygulamanın bileşenlerini ayrı ayrı katmanlar halinde organize ederek, her katmanın bağımsız ve birbiriyle ilişkili ancak bağımlı olmadan çalışmasını sağlar. Bu yapı da şu şekildedir:
+
+Core Layer (Çekirdek Katman): İş mantığı içerir ve bu mantık, gelen isteklerin işlenmesi ve ilgili servise yönlendirilmesidir.
+Infrastructure Layer (Altyapı Katmanı): proxy_request, get_request_params ve forward_request gibi işlemleri yönetir. Bu katman sayesinde mikro servislerle iletişim sağlanır ve API yönlendirmesi yapılır.
+Framework Layer (Çerçeve Katmanı): Django ve DRF (Django Rest Framework) ile tanımlanan katmandır; HTTP isteklerini yönetir ve yönlendirmeleri sağlar.
+API Gateway İşleyişi - Adım Adım İnceleme
+Örnek Senaryo:
+Frontend tarafından /users/create/ endpoint'ine bir kullanıcı oluşturma isteği (POST isteği) yapılmak istensin. Bu istek aşağıdaki gibi işlenecek:
+
+Frontend’den Gelen İstek
+
+Kullanıcı, /users/create/ URL’sine POST isteğinde bulunur.
+Bu istek, URL ayarları içinde tanımlanan path('<path:path>', APIGatewayView.as_view(), name='api_gateway') kısmına eşleşir ve APIGatewayView sınıfına yönlendirilir.
+URL Yönlendirmesi ve View İşlemi
+
+APIGatewayView sınıfı, bu isteği karşılayacak ve işlemek üzere post metodunu çalıştıracaktır. Buradaki post metodu, proxy_request metodunu çağırarak asıl yönlendirme işlemini başlatır.
+Proxy Request Metodu (proxy_request)
+
+proxy_request metodu, istek yoluna (path) göre ilgili mikro servis URL'sini belirlemek için get_service_url fonksiyonunu çağırır.
+get_service_url:
+İstek yolundaki path ifadesini settings.SERVICE_ROUTES içinde tarar.
+settings.py içinde tanımlı SERVICE_ROUTES = {'users': 'http://usermanagementc:8000'} gibi bir yapı varsa /users/create/ isteği user_management servisine yönlendirilmek üzere URL'yi döner.
+Örneğin: /users/create/ yolunu yakalar ve http://usermanagementc:8000 temel URL’sini döner.
+İstek URL'sinin Oluşturulması
+
+proxy_request, dönen base_url ve path değişkenlerini birleştirerek tam URL’yi oluşturur.
+Tam URL full_url = f"{base_url}/{path}" şeklinde belirlenir. Örneğin, http://usermanagementc:8000/users/create/.
+İstek Parametrelerinin Alınması (get_request_params)
+
+get_request_params metodu, gelen isteğin parametrelerini alır ve JSON formatında ya da URL parametreleri şeklinde hazırlar. POST isteği olduğundan, request.data içindeki JSON verisi ({'name': 'John Doe', 'email': 'john@example.com'} gibi) burada ayarlanır.
+get_request_params JSON verisini params sözlüğünde {'json': request.data} olarak döner.
+İsteğin Mikro Servise Yönlendirilmesi (forward_request)
+
+forward_request metodu, requests kütüphanesi ile hazırlanan full_url, method, headers ve params bilgileri ile istek yapılır.
+POST isteği ile http://usermanagementc:8000/users/create/ URL’sine JSON formatındaki kullanıcı verileri gönderilir.
+İstek başarılı olursa, yönlendirilen mikro servisten yanıt gelir ve bu yanıt forward_request tarafından döndürülür.
+Yanıtın İşlenmesi ve Dönüş (handle_response)
+
+Mikro servisten gelen yanıt handle_response metoduna gönderilir. Eğer yanıt application/json formatında ise, response.json() ile JSON formatında işlenir.
+Gelen yanıt JSON formatında değilse, olduğu gibi döner.
+APIGatewayView Sınıfının Metotları Detaylıca
+proxy_request(self, request, path)
+
+Tüm HTTP isteklerini (GET, POST, PUT vb.) mikro servislere yönlendiren ana metottur.
+Önce get_service_url metodu ile temel URL belirlenir.
+Ardından get_request_params ile isteğin parametreleri düzenlenir.
+Son olarak forward_request ile isteği mikro servise gönderir ve gelen yanıtı handle_response ile işler.
+get_service_url(self, path)
+
+İstek yoluna göre (örneğin, /users/create/) hangi mikro servise yönlendirilmesi gerektiğini belirler.
+Eğer path settings.SERVICE_ROUTES içindeki bir rota ile başlıyorsa, ilgili mikro servisin temel URL’sini döner. Eşleşme bulamazsa None döner.
+get_request_params(self, request)
+
+İstek parametrelerini hazırlar.
+POST, PUT, PATCH gibi metotlarda JSON verisini; GET, DELETE gibi metotlarda URL sorgu parametrelerini (query_params) döner.
+forward_request(self, request, url, params)
+
+requests kütüphanesi ile HTTP isteği gönderir.
+Gelen isteğin method, headers, ve params bilgilerini kullanarak belirlenen URL’ye isteği yönlendirir.
+Bu metod aynı zamanda hata yönetimini üstlenir ve istek sırasında bir hata oluşursa 500 Internal Server Error yanıtı döner.
+handle_response(self, response)
+
+Mikro servisten gelen yanıtı işler.
+Yanıt JSON formatında ise Response(response.json(), status=response.status_code) ile JSON olarak döner; değilse yanıtın içeriğini olduğu gibi döndürür.
+Adım Adım Genel Akış Özet
+İstek Karşılanır: Frontend uygulamadan gelen istek, urlpatterns içindeki dinamik path’e (örn. /users/create/) yönlendirilir ve APIGatewayView sınıfının ilgili HTTP metodu (GET, POST vb.) çağrılır.
+URL Belirlenir: proxy_request ile get_service_url çağrılarak istek için hedef servis belirlenir.
+Parametreler Hazırlanır: get_request_params ile istek parametreleri ayarlanır.
+İstek Mikro Servise Yönlendirilir: forward_request ile mikro servise istek yapılır.
+Yanıt İşlenir ve Döndürülür: handle_response ile yanıt frontend uygulamaya geri döndürülür.
+Bu yapı, Onion Mimarisi'ne uygun olup, gelen isteklerin iş mantığından ayrı bir katmanda işlenmesi ve güvenli bir proxy mekanizmasıyla mikro servis yönlendirmesi yapılmasını sağlar.
+ API Gateway, tüm bu işlemleri düzenleyip yöneterek frontend ile mikro servisler arasındaki iletişimi standart hale getirir.
+
+
+ MIDDLEWARE 
+Middleware Nedir?
+Middleware, web uygulamalarında gelen istekleri ve giden yanıtları işlemeden önce araya giren bir katmandır. 
+Orta katman gibi çalışarak uygulamada ek işlevsellik veya doğrulama sağlayabilir. Örneğin, güvenlik doğrulamaları, 
+isteklerdeki verileri değiştirme veya analiz etme gibi işlemler middleware katmanında yapılabilir.
+Middleware, her gelen isteği işler, bu isteğin bir doğrulama sürecinden geçmesini, 
+günlük kaydının yapılmasını veya isteğin bir şekilde dönüştürülmesini sağlar. Sonrasında, bu isteği diğer middleware'lere veya doğrudan uygulamanın ilgili kısmına iletir. Django gibi birçok web çatısı, birden fazla middleware kullanma desteği sunarak, 
+istek ve yanıt döngüsüne farklı görevler eklemeyi kolaylaştırır.
+Bu örnekteki JWTAuthenticationMiddleware, JSON Web Token (JWT) doğrulamasını yaparak isteklerin güvenli bir şekilde ilgili mikro servislere yönlendirilmesini sağlar.
+
+
+
+ Genel Akış: Adım Adım JWT Doğrulama Süreci
+Gelen İstek İşleme Alınır:
+
+Kullanıcıdan gelen istek __call__ metodu ile karşılanır.
+İstisna Yolların Kontrolü:
+
+Eğer istek /users/create/ veya /users/login/ yoluna gidiyorsa, JWT doğrulaması yapılmadan istek bir sonraki aşamaya geçer.
+Token Kontrolü ve Alma:
+
+Token, Authorization başlığında aranır. Token yoksa 401 Unauthorized yanıtı ile istek reddedilir.
+Token Ayrıştırma ve Çözümleme:
+
+Bearer ile başlayan token'dan token kısmı alınır ve çözümleme işlemi yapılır.
+Çözümlemede user_id bilgisi alınarak request.user_id değişkenine eklenir.
+Token Hatalarının Yönetimi:
+
+Token süresi dolmuşsa 401 Token has expired, geçersiz token için 401 Invalid token yanıtları döner.
+Diğer hatalar 400 yanıtı ile kullanıcıya iletilir.
+Başarılı Token Kontrolü:
+
+Token doğrulaması başarıyla geçilirse istek, uygulama içinde bir sonraki aşamaya geçer ve kullanıcı verisi içeren istek ilgili servise iletilir.
+Bu middleware, her istek için token doğrulaması yaparak servis güvenliğini sağlar. Bu sayede sadece geçerli token’a sahip kullanıcılar servislere erişim sağlayabilir.
+
+

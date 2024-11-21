@@ -1,0 +1,92 @@
+body {
+    background: #2c3e50; /* Açık gri arka plan */
+    margin-top: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.card {
+    border-radius: 0.75rem; /* Yuvarlatılmış köşeler */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+    margin-bottom: 1.5rem;
+    border: 1px solid #0056b3; /* Gri kenar rengi #7e0e46 tonları dene */
+    background-color: #1a252f; /* Beyaz arka plan */
+}
+
+#file-input {
+    display: inline-block; /* Görünür ve interaktif hale getir */
+}
+
+.avatar {
+    border: 4px solid #007bff; /* Mavi border */
+    border-radius: 50%;
+}
+
+.btn-primary {
+    background-color: #007bff; /* Mavi */
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Koyu mavi hover rengi */
+    border-color: #004494;
+}
+
+.text-secondary {
+    color: #6c757d; /* Koyu gri */
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.75rem 1rem; /* Padding */
+    background-color: #f8f9fa; /* Açık gri arka plan */
+}
+
+.rank-card {
+    background: #007bff; /* Mavi */
+    color: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.rank-card h5 {
+    margin: 0;
+    font-size: 1.5rem; /* Büyük başlık */
+}
+
+.contact-info {
+    border-left: 4px solid #007bff; /* Mavi border */
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.contact-info .icon {
+    font-size: 1.5rem;
+    color: #007bff; /* Mavi ikon rengi */
+}
+
+.navbar {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ddd; /* Alt çizgi */
+}
+
+.navbar-nav .nav-link {
+    color: #007bff !important; /* Mavi bağlantı rengi */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #0056b3 !important; /* Hover rengi */
+}
+
+.navbar-nav {
+    flex-direction: row; /* Yatay hizalama */
+}
+
+.navbar-nav .nav-item {
+    margin-right: 1rem; /* Boşluk */
+}
+
+.navbar-brand {
+    flex-grow: 1; /* Sola yaslama */
+    text-align: center; /* Ortalama */
+}

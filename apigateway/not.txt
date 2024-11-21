@@ -1,0 +1,47 @@
+API Gateway
+Projeme API Gateway servisini ekledim. API Gateway, frontend ile diğer servisler arasındaki iletişimi yönetiyor. Yani, frontend kısmında yapılan login işlemi API Gateway üzerinden ilgili servise yönlendiriliyor.
+
+Token Doğrulama
+API Gateway, tüm isteklerin geçiş yaptığı bir ortak servis olduğu için, kullanıcı login olduktan sonra oluşturulan token her istekte API Gateway üzerinde kontrol edilecek. Bu işlemi middleware olarak adlandırılan bir ara katmanda gerçekleştiriyoruz.
+
+2FA Doğrulama
+2FA (İki Aşamalı Doğrulama) için önce model ve serializer'ımı düzenledim. Ardından login endpoint'ine 2FA ile ilgili eklemeler yaptım.
+
+--Test Süreci--
+*API Gateway Testi: 
+
+API Gateway'in çalıştığı 8007 portu üzerinden istekler atmalıyız:
+
+http://127.0.0.1:8007/users/list/
+http://localhost:8007/game/save/
+
+*Token Doğrulama:
+
+http://127.0.0.1:8007/users/login/ adresine istek atarak, eğer kullanıcı oluşturulmuşsa login işlemi gerçekleştirebiliriz.
+Login işlemi başarılı olursa bir token dönecek. Bu token’ı kopyalayıp, login ve create harici bir istek üzerinde test edebiliriz:
+http://127.0.0.1:8007/users/list/
+Bu GET isteğini yazdıktan sonra, Authorization kısmında Bearer token seçip, login'den dönen token'ı buraya yapıştırıyoruz ve isteği gönderiyoruz.
+
+
+*2FA Testi: 
+
+Kullanıcı oluşturma işlemi sırasında:
+
+{
+  "username": "ozduremre",
+  "password": "1234",
+  "first_name": "emre",
+  "last_name": "özdur",
+  "email": "emreozdur06@gmail.com"
+}
+Geçerli bir e-posta adresi ile login isteği atıyoruz.
+
+Login başarılı olursa, bu e-postaya bir 2FA kodu gönderilecek. Bu kodu doğrulamak için bir endpoint ekledim:
+
+http://127.0.0.1:8007/users/validate/
+{
+    "twofa_code": "581614",
+    "email": "emreozdur06@gmail.com"
+}
+
+kod doğru şekilde girilirse artık giriş yapbiliriz
