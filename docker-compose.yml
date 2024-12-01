@@ -1,0 +1,112 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend_network
+
+  usermanagement:
+    build: ./user_management/
+    container_name: usermanagementc
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./user_management:/app
+      - ./user_management/avatars:/app/avatars
+    working_dir: /app
+    ports:
+      - "8004:8000"
+    env_file:
+      - .env
+    networks:
+      - backend_network
+
+  game:
+    build: ./game/
+    container_name: game_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./game:/app
+    working_dir: /app
+    ports:
+      - "8005:8001"
+    env_file:
+      - .env
+    networks: 
+      - backend_network
+
+  friend_service:
+    build: ./friend_service/
+    container_name: friend_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./friend_service:/app
+    working_dir: /app
+    ports:
+      - "8006:8002"
+    env_file:
+      - .env
+    networks:
+      - backend_network
+
+  # Yeni API Gateway servisi
+  apigateway:
+    build: ./apigateway
+    container_name: apigateway
+    depends_on:
+      - usermanagement
+      - game
+      - friend_service
+    ports:
+      - "8007:8007"
+    env_file:
+      - .env
+    volumes:
+      - ./apigateway:/app
+    working_dir: /app
+    networks:
+      - backend_network
+
+  nginx:
+      build: 
+        context: ./frontendservice/
+        args:
+          NGINX_SSL_CN: localhost
+      container_name: nginx
+      ports:
+        - "8008:443"
+        - "8080:80"
+      volumes:
+        - ./frontendservice/frontend:/usr/share/nginx/html
+        - ./frontendservice/nginx.conf:/etc/nginx/conf.d/default.conf
+        - ./user_management/avatars:/usr/share/nginx/html/avatars
+      networks:
+        - backend_network
+
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+      name: ft_transcendence
+  backend_network:
+      driver: bridge

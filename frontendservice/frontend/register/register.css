@@ -1,0 +1,58 @@
+body {
+    background: #1a252f;
+}
+
+.gradient-custom-2 {
+    background: linear-gradient(to left, #2c3e50, #1a252f);
+    font-size: large;
+}
+
+.card {
+    background: linear-gradient(to left, #15749775, #60929b8a, #295250);
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card-body {
+    color: #e0e0e0;
+}
+
+.form-control {
+    border-radius: 1rem;
+    border: 1px solid #444;
+    background-color: #3f566b;
+    color: #fff;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #ddd;
+}
+
+.error {
+    color: #f44336;
+}
+
+.btn-primary {
+    background-color: #4e54c8;
+    border-color: #4e54c8;
+    transition: background-color 0.3s ease;
+    border-radius: 20px;
+}
+
+.btn-primary:hover {
+    background-color: #3e44a0;
+}
+
+.btn-outline-secondary {
+    border-color: #8f94fb;
+    color: #8f94fb;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #8f94fb;
+    color: #ffffff;
+}

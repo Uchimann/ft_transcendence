@@ -1,0 +1,93 @@
+
+body {
+    background: #1a252f;
+
+}
+
+
+.gradient-custom-2 {
+    background: linear-gradient(to right, #2c3e50, #1a252f);
+
+    font-size: large;
+}
+
+.gradient-custom-3 {
+    border-color: #8f94fb;
+    color: #8f94fb;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+.card {
+    background: linear-gradient(to right, #15749775, #60929b8a, #295250);
+
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.card-body {
+    color: #e0e0e0;
+
+}
+
+
+.form-control {
+    border-radius: 1rem;
+    border: 1px solid #444;
+
+    background-color: #34495e;
+
+    color: #fff;
+
+}
+
+
+.form-group label {
+    font-weight: bold;
+    color: #ddd;
+
+}
+
+
+.btn-primary:hover {
+    background-color: #3e44a0;
+
+}
+
+
+.btn-custom {
+    background: linear-gradient(to left, #2c3e50, #1a252f);
+
+    border-color: #4e54c8;
+    color: white;
+    border-radius: 1rem;
+    font-size: 1rem;
+
+    padding: 10px 20px;
+
+    transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #3e44a0;
+
+}
+
+
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 20px;;
+}
+
+
+h4 {
+    color: #ffffff;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-style: bold;
+}

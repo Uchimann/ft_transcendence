@@ -1,0 +1,66 @@
+.overlay.topLeft, .overlay.topRight, .overlay.topCenter {
+    position: absolute;
+    top: 10px;
+    color: black; 
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+    z-index: 10;
+}
+
+.overlay.topLeft {
+    left: 20px;
+}
+
+.overlay.topRight {
+    right: 20px;
+}
+
+.overlay.topCenter {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.game-buttons {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px; 
+}
+
+.startGame {
+    background-color: #4CAF50;
+    color: black; 
+    border: none;
+    border-radius: 25px;
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.startGame:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.startGame:active {
+    background-color: #3e8e41;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+    .game-buttons {
+        gap: 10px;
+    }
+}
+html, body {
+    overflow: hidden; 
+    margin: 0;
+    padding: 0;
+    height: 100%; 
+}
